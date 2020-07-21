@@ -1,0 +1,638 @@
+openapi: 3.0.2
+servers:
+  - url: /v3
+info:
+  description: |-
+    A vehicle hire company has a number of cars and vans, and a variety of customers, some of whom are individuals who might only hire one vehicle at a time and some of whom are companies who might have multiple vehicles on hire at any one time. The hire company has many vehicles of the same make and model. Vehicles are hired on a daily basis, rather than hourly.
+    
+    This is based on the Swagger Petstore Example as only an hour to complete the task.
+
+    Some useful links:
+    - [The Vehicle Hire Booking System repository](https://github.com/swagger-api/swagger-vhbs)
+    - [The source API definition for the Vehicle Hire Booking System](https://github.com/swagger-api/swagger-vhbs/blob/master/src/main/resources/openapi.yaml) 
+  version: 1.0.0-SNAPSHOT
+  title: Vehicle Hire Booking System VHBS - OpenAPI 3.0
+  termsOfService: 'https://github.com/babcockmariegriffiths/vehiclehirebookingsystem/blob/master/README.md'
+  contact:
+    email: babcock@mariegriffiths.co.uk
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: vehicle
+    description: Everything about your Vehicles
+    externalDocs:
+      description: Find out more
+      url: 'https://github.com/babcockmariegriffiths/vehiclehirebookingsystem/blob/master/README.md'
+  - name: store
+    description: Operations about user
+  - name: user
+    description: Access to Vehicle Hire Booking System hires
+    externalDocs:
+      description: Find out more about our store
+      url: 'https://github.com/babcockmariegriffiths/vehiclehirebookingsystem/blob/master/README.md'
+paths:
+  /vehicle:
+    post:
+      tags:
+        - vehicle
+      summary: Add a new vehicle to the store
+      description: Add a new vehicle to the store
+      operationId: addVehicle
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '405':
+          description: Invalid input
+      requestBody:
+        description: Create a new vehicle in the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+    put:
+      tags:
+        - vehicle
+      summary: Update an existing vehicle
+      description: Update an existing vehicle by Id
+      operationId: updateVehicle
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Vehicle not found
+        '405':
+          description: Validation exception
+      requestBody:
+        description: Update an existent vehicle in the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Vehicle'
+  '/vehicle/{vehicleId}':
+    get:
+      tags:
+        - vehicle
+      summary: Find vehicle by ID
+      description: Returns a single vehicle
+      operationId: getVehicleById
+      parameters:
+        - name: vehicleId
+          in: path
+          description: ID of vehicle to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Vehicle not found
+    delete:
+      tags:
+        - vehicle
+      summary: Deletes a vehicle
+      description: ''
+      operationId: deleteVehicle
+      parameters:
+        - name: api_key
+          in: header
+          description: ''
+          required: false
+          schema:
+            type: string
+        - name: vehicleId
+          in: path
+          description: Vehicle id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid vehicle value
+  /store/getToHireToday:
+    get:
+      tags:
+        - store
+      summary: Returns vehicle available for hire today
+      description: Returns a list of vehicles
+      operationId: getToHireToday
+      x-swagger-router-controller: HireController
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+                  format: int32
+  '/store/hire/{hireId}':
+    get:
+      tags:
+        - store
+      summary: Find purchase hire by ID
+      x-swagger-router-controller: HireController
+      description: >-
+        For valid response try integer IDs with value <= 5 or > 10. Other values
+        will generated exceptions
+      operationId: getHireById
+      parameters:
+        - name: hireId
+          in: path
+          description: ID of hire that needs to be fetched
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Hire'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Hire'
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Hire not found
+    delete:
+      tags:
+        - store
+      summary: Delete purchase hire by ID
+      x-swagger-router-controller: HireController
+      description: >-
+        For valid response try integer IDs with value < 1000. Anything above
+        1000 or nonintegers will generate API errors
+      operationId: deleteHire
+      parameters:
+        - name: hireId
+          in: path
+          description: ID of the hire that needs to be deleted
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Hire not found
+  /user:
+    post:
+      tags:
+        - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      responses:
+        default:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Created user object
+  /user/createWithList:
+    post:
+      tags:
+        - user
+      summary: Creates list of users with given input array
+      description: 'Creates list of users with given input array'
+      x-swagger-router-controller: UserController
+      operationId: createUsersWithListInput
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: successful operation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/User'
+  /user/login:
+    get:
+      tags:
+        - user
+      summary: Logs user into the system
+      description: ''
+      operationId: loginUser
+      parameters:
+        - name: username
+          in: query
+          description: The user name for login
+          required: false
+          schema:
+            type: string
+        - name: password
+          in: query
+          description: The password for login in clear text
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when toekn expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Invalid username/password supplied
+  /user/logout:
+    get:
+      tags:
+        - user
+      summary: Logs out current logged in user session
+      description: ''
+      operationId: logoutUser
+      parameters: []
+      responses:
+        default:
+          description: successful operation
+  '/user/{username}':
+    get:
+      tags:
+        - user
+      summary: Get user by user name
+      description: ''
+      operationId: getUserByName
+      parameters:
+        - name: username
+          in: path
+          description: 'The name that needs to be fetched. Use user1 for testing. '
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/User'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+    put:
+      tags:
+        - user
+      summary: Update user
+      x-swagger-router-controller: UserController
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: name that need to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        default:
+          description: successful operation
+      requestBody:
+        description: Update an existent user in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/User'
+    delete:
+      tags:
+        - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The name that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '400':
+          description: Invalid username supplied
+        '404':
+          description: User not found
+components:
+  schemas:
+    Hire:
+      x-swagger-router-model: io.swagger.vhbs.model.Hire
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        vehicleId:
+          type: integer
+          format: int64
+          example: 198772
+        hireDate:
+          type: string
+          format: date-time
+        finishDate:
+          type: string
+          format: date-time
+          example: Sun19 Jul 2020 13:43:48 GMT
+        customerId:
+          type: integer
+          format: int64
+          example: 198772
+      xml:
+        name: hire
+      type: object
+    Customer:
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 100000
+        username:
+          type: string
+          example: fehguy
+        address:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+          xml:
+            wrapped: true
+            name: addresses
+      xml:
+        name: customer
+      type: object
+    Address:
+      properties:
+        street:
+          type: string
+          example: 437 Lytton
+        city:
+          type: string
+          example: Palo Alto
+        state:
+          type: string
+          example: CA
+        zip:
+          type: string
+          example: 94301
+      xml:
+        name: address
+      type: object
+    Category:
+      x-swagger-router-model: io.swagger.vhbs.model.Category
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Van
+        currentPrice:
+          $ref: '#/components/schemas/Cost'
+      xml:
+        name: category
+      type: object
+    Cost:
+      x-swagger-router-model: io.swagger.vhbs.model.Cost
+      required:
+        - price
+        - currencyCode
+      properties:
+        price:
+          type: number
+          example: 25.00
+        currencyCode:
+          type: string
+          example: GBP
+      xml:
+        name: make
+      type: object
+    FuelType:
+      x-swagger-router-model: io.swagger.vhbs.model.FuelType
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Petrol
+      xml:
+        name: fueltype
+      type: object
+    Make:
+      x-swagger-router-model: io.swagger.vhbs.model.Make
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Ford
+      xml:
+        name: make
+      type: object
+    Model:
+      x-swagger-router-model: io.swagger.vhbs.model.Model
+      required:
+        - name
+        - make
+        - category
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        name:
+          type: string
+          example: Fiesta
+        make:
+          $ref: '#/components/schemas/Make'
+        category:
+          $ref: '#/components/schemas/Category'
+      xml:
+        name: model
+      type: object
+    User:
+      x-swagger-router-model: io.swagger.vhbs.model.User
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        username:
+          type: string
+          example: theUser
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: 12345
+        phone:
+          type: string
+          example: 12345
+        userStatus:
+          type: integer
+          format: int32
+          example: 1
+          description: User Status
+      xml:
+        name: user
+      type: object
+    Vehicle:
+      x-swagger-router-model: io.swagger.vhbs.model.Vehicle
+      required:
+        - registrationNumber
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        registrationNumber:
+          type: string
+          example: CAR 123
+        model:
+          $ref: '#/components/schemas/Model'
+        fuelType:
+          $ref: '#/components/schemas/FuelType'
+      xml:
+        name: vehicle
+      type: object
+    ApiResponse:
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+      xml:
+        name: '##default'
+      type: object
+  requestBodies:
+    Vehicle:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Vehicle'
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/Vehicle'
+      description: Vehicle object that needs to be added to the store
+    UserArray:
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/User'
+      description: List of user object

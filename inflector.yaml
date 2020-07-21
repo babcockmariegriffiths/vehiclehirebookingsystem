@@ -1,0 +1,16 @@
+controllerPackage: uk.co.mariegriffiths.vhbs.controller
+modelPackage:  uk.co.mariegriffiths.vhbs.model
+swaggerUrl: openapi.yaml
+
+exposedSpecOptions:
+  useOriginalNotParsed: true
+
+entityProcessors:
+- json
+- yaml
+- xml
+
+#swaggerProcessors:
+#- uk.co.mariegriffiths.vhbs.utils.HandleAuthUrlProcessor
+
+rootPath: /api
